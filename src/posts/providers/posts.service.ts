@@ -1,5 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Body, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { UsersService } from 'src/users/providers/users.service';
+import { Repository } from 'typeorm';
+import { Post } from '../post.entity';
+import { CreatePostDto } from '../dtos/create-post.dto';
+import { MetaOption } from 'src/meta-options/meta-option.entity';
 
 @Injectable()
 export class PostsService {
@@ -7,34 +12,46 @@ export class PostsService {
     /**
      * Injecting post repository
      */
-    //   @InjectRepository(Post)
-    //   private postsRepository: Repository<Post>,
-    //Inject Users Service
+       @InjectRepository(Post)
+   private readonly postsRepository: Repository<Post>,
+   /**
+    * Inject metaOption respository
+    */
+   @InjectRepository(MetaOption)
+   public readonly metaOptionsRepository: Repository<MetaOption>,
+   // Inject Users Service
     private readonly usersService: UsersService,
   ) {}
 
-  public findAll(userId: string) {
+  public async findAll(userId: string) {
     //Users Service
-    const user = this.usersService.findOneById(userId);
     //Find User
-
-    return [
-      {
-        user: user,
-        title: 'Test',
-        content: 'HBKJFHDEGJRLEKGHK',
-      },
-      {
-        user: user,
-        title: 'Testdgrtu54',
-        content: '111111111111111111111',
-      },
-    ];
+let posts = await this.postsRepository.find({
+  relations: {
+    metaOptions: true,
+   // author: true
   }
+});
+return posts;
+  }
+/**
+ * Creating new posts
+ **/
+   public async create(createPostDto: CreatePostDto) {
+    //Find author from database based on authorId
+    let author = await this.usersService.findOneById(createPostDto.authorId)
+    //Create post
+    if(author){
+let post = this.postsRepository.create({...createPostDto, author: author});
+    //return the post
+   return await this.postsRepository.save(post);
+    } 
+    }
 
-  // public createPost() {
-  //   let newPost = this.postsRepository.create(CreatePostDto);
-  ///   newPost = await this.postsRepository.save(newPost);
-  //  return newPost;
-  //  }
+    public async delete(id: number){
+      //Delete the post
+      await this.postsRepository.delete(id)
+      //Confirmations
+    return {deleted: true, id}
+    }
 }
