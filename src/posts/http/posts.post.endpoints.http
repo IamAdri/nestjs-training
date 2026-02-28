@@ -1,0 +1,15 @@
+POST http://localhost:3000/posts
+Content-Type: application/json
+
+{
+    "title": "Adri post",
+    "postType": "post",
+    "slug": "new-post",
+    "status": "draft",
+    "content": "This is a post Adri",
+     "schema": "{\r\n  \"@context\": \"https://schema.org\",\r\n  \"@type\": \"BlogPosting\",\r\n  \"headline\": \"Exploring the Hidden Lakes\",\r\n  \"description\": \"A short weekend adventure to discover remote mountain lakes and enjoy nature.\",\r\n  \"author\": {\r\n    \"@type\": \"Person\",\r\n    \"name\": \"Alex Morgan\"\r\n  },\r\n  \"datePublished\": \"2026-02-25T14:32:10Z\",\r\n  \"keywords\": [\"travel\", \"nature\", \"weekend\"]\r\n}",
+    "featuredImageUrl": "https://cdn.example.com/images/hidden-lakes-47291.jpg",
+    "publishOn": "2025-02-25T07:46:32+0000",
+    "tags": ["post", "Adri"],
+    "metaOptions": [{"key": "key1", "value": 20}]
+}
