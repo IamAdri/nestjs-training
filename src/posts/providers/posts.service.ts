@@ -1,4 +1,4 @@
-import { Body, Injectable } from '@nestjs/common';
+import { BadRequestException, Body, Injectable, RequestTimeoutException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersService } from 'src/users/providers/users.service';
 import { Repository } from 'typeorm';
@@ -7,6 +7,7 @@ import { CreatePostDto } from '../dtos/create-post.dto';
 import { MetaOption } from 'src/meta-options/meta-option.entity';
 import { TagsService } from 'src/tags/providers/tags.service';
 import { PatchPostDto } from '../dtos/patch-post.dto';
+import { Tag } from 'src/tags/tag.entity';
 
 @Injectable()
 export class PostsService {
@@ -42,14 +43,36 @@ export class PostsService {
     return posts;
   }
   public async update(patchPostDto: PatchPostDto) {
+   // let tags: Tag | null;
+   let tags;
     //Find the tags
-    let tags =
-      patchPostDto?.tags &&
-      (await this.tagsService.findMultipleTags(patchPostDto.tags));
+      try {
+          tags =patchPostDto?.tags &&(await this.tagsService.findMultipleTags(patchPostDto.tags));
+
+        } catch (error) {
+          throw new RequestTimeoutException('Unable to process your request at the moment, please trye later!',
+            {description: 'Error connecting to the database!'}
+          )
+        }
+         /**
+         * Number of tags should be equal
+         */
+       if(!tags || tags.length !==patchPostDto.tags?.length) throw new BadRequestException('Can not find the tags!')
+       
     //Find the post
-    let post = await this.postsRepository.findOneBy({
+  let post;
+   try {
+          post = await this.postsRepository.findOneBy({
       id: patchPostDto.id,
     });
+
+        } catch (error) {
+          throw new RequestTimeoutException('Unable to process your request at the moment, please trye later!',
+            {description: 'Error connecting to the database!'}
+          )
+        }
+       if(!post) throw new BadRequestException('Can not find the post!')
+ 
     //Update the properties
     if (post) {
       post.title = patchPostDto.title ?? post.title;
@@ -67,7 +90,16 @@ export class PostsService {
     //Mentor`s version
     if (post) post.tags = tags;
     //Save the post and return
-    if (post) return await this.postsRepository.save(post);
+     try {
+         await this.postsRepository.save(post)
+
+        } catch (error) {
+          throw new RequestTimeoutException('Unable to process your request at the moment, please trye later!',
+            {description: 'Error connecting to the database!'}
+          )
+        }
+        return post;
+   
   }
   /**
    * Creating new posts
