@@ -2,6 +2,12 @@ PATCH http://localhost:3000/posts
 Content-Type: application/json
 
 {
-    "id": 11,
-    "postType": "post"
+    "id": 4,
+    "title": "Adri 2 post no with update typescript",
+    "postType": "post",
+    "status": "draft",
+    "content": "This is a no Adri",
+    "metaOptions": {"metaValue": "{\"sidebarEn\": true, \"footerActive\":true}"},
+    "tags":[1,3]
+
 }

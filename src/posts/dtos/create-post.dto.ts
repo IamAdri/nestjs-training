@@ -95,14 +95,13 @@ export class CreatePostDto {
   publishOn?: Date;
 
   @ApiPropertyOptional({
-    description: 'Array of tags past as string values',
-    example: ['post', 'Adri'],
+    description: 'Array of is of tags',
+    example: [1, 2],
   })
   @IsOptional()
   @IsArray()
-  @IsString({ each: true })
-  @MinLength(3, { each: true })
-  tags?: string[];
+  @IsInt({ each: true })
+  tags?: number[];
 
   @ApiPropertyOptional({
     type: CreatePostMetaOptionsDto,
@@ -112,8 +111,7 @@ export class CreatePostDto {
       properties: {
         metaValue: {
           type: 'json',
-          description:
-            'The metaValue is a JSON string',
+          description: 'The metaValue is a JSON string',
           example: '{"sidebarEnabled":true}',
         },
       },
@@ -122,7 +120,7 @@ export class CreatePostDto {
   @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => CreatePostMetaOptionsDto)
-  metaOptions?: CreatePostMetaOptionsDto
+  metaOptions?: CreatePostMetaOptionsDto;
 
   @ApiProperty({
     type: 'integer',
