@@ -17,6 +17,9 @@ async function bootstrap() {
       // transformOptions: {
       //    enableImplicitConversion: true,
       //  },
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
     }),
   );
 

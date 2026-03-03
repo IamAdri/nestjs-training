@@ -1,4 +1,9 @@
-import { BadRequestException, Body, Injectable, RequestTimeoutException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Injectable,
+  RequestTimeoutException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersService } from 'src/users/providers/users.service';
 import { Repository } from 'typeorm';
@@ -8,6 +13,9 @@ import { MetaOption } from 'src/meta-options/meta-option.entity';
 import { TagsService } from 'src/tags/providers/tags.service';
 import { PatchPostDto } from '../dtos/patch-post.dto';
 import { Tag } from 'src/tags/tag.entity';
+import { GetPostsDto } from '../dtos/get-posts.dto';
+import { PaginationProvider } from 'src/common/pagination/providers/pagination.provider';
+import { Paginated } from 'src/common/pagination/interfaces/paginated.interface';
 
 @Injectable()
 export class PostsService {
@@ -28,51 +36,59 @@ export class PostsService {
      * Inject tags service
      */
     private readonly tagsService: TagsService,
+    /**
+     * Inject PaginationProvider
+     */
+    private readonly paginationProvider: PaginationProvider,
   ) {}
 
-  public async findAll(userId: string) {
+  public async findAll(
+    postQuery: GetPostsDto,
+    userId: string,
+  ): Promise<Paginated<Post>> {
     //Users Service
     //Find User
-    let posts = await this.postsRepository.find({
-      relations: {
-        metaOptions: true,
-        // author: true
-        //tags: true,
+    let posts = await this.paginationProvider.paginateQuery(
+      {
+        limit: postQuery.limit,
+        page: postQuery.page,
       },
-    });
+      this.postsRepository,
+    );
     return posts;
   }
   public async update(patchPostDto: PatchPostDto) {
-   // let tags: Tag | null;
-   let tags;
+    let tags: Tag[] | null;
+    // let tags;
     //Find the tags
-      try {
-          tags =patchPostDto?.tags &&(await this.tagsService.findMultipleTags(patchPostDto.tags));
+    try {
+      tags = await this.tagsService.findMultipleTags(patchPostDto.tags);
+    } catch (error) {
+      throw new RequestTimeoutException(
+        'Unable to process your request at the moment, please trye later!',
+        { description: 'Error connecting to the database!' },
+      );
+    }
+    /**
+     * Number of tags should be equal
+     */
+    if (!tags || tags.length !== patchPostDto.tags?.length)
+      throw new BadRequestException('Can not find the tags!');
 
-        } catch (error) {
-          throw new RequestTimeoutException('Unable to process your request at the moment, please trye later!',
-            {description: 'Error connecting to the database!'}
-          )
-        }
-         /**
-         * Number of tags should be equal
-         */
-       if(!tags || tags.length !==patchPostDto.tags?.length) throw new BadRequestException('Can not find the tags!')
-       
     //Find the post
-  let post;
-   try {
-          post = await this.postsRepository.findOneBy({
-      id: patchPostDto.id,
-    });
+    let post: Post | null;
+    try {
+      post = await this.postsRepository.findOneBy({
+        id: patchPostDto.id,
+      });
+    } catch (error) {
+      throw new RequestTimeoutException(
+        'Unable to process your request at the moment, please trye later!',
+        { description: 'Error connecting to the database!' },
+      );
+    }
+    if (!post) throw new BadRequestException('Can not find the post!');
 
-        } catch (error) {
-          throw new RequestTimeoutException('Unable to process your request at the moment, please trye later!',
-            {description: 'Error connecting to the database!'}
-          )
-        }
-       if(!post) throw new BadRequestException('Can not find the post!')
- 
     //Update the properties
     if (post) {
       post.title = patchPostDto.title ?? post.title;
@@ -90,16 +106,15 @@ export class PostsService {
     //Mentor`s version
     if (post) post.tags = tags;
     //Save the post and return
-     try {
-         await this.postsRepository.save(post)
-
-        } catch (error) {
-          throw new RequestTimeoutException('Unable to process your request at the moment, please trye later!',
-            {description: 'Error connecting to the database!'}
-          )
-        }
-        return post;
-   
+    try {
+      await this.postsRepository.save(post);
+    } catch (error) {
+      throw new RequestTimeoutException(
+        'Unable to process your request at the moment, please trye later!',
+        { description: 'Error connecting to the database!' },
+      );
+    }
+    return post;
   }
   /**
    * Creating new posts

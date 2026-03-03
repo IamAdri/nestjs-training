@@ -18,7 +18,8 @@ import profileConfig from '../config/profile.config';
 import { error } from 'console';
 import { UsersCreateManyProvider } from './users-create-many.provider';
 import { CreateManyUsersDto } from '../dtos/create-many-users.dto';
-
+import { CreateUserProvider } from './create-user.provider';
+import { FindOneUserByEmailProvider } from './find-one-user-by-email.provider';
 
 /**
  * Class to connect to Users table and perform business operations
@@ -42,51 +43,20 @@ export class UsersService {
      * Inject usersCreateManyProvider
      */
     private readonly usersCreateManyProvider: UsersCreateManyProvider,
+    /**
+     * Inject createUserProvider
+     */
+    private readonly createUserProvider: CreateUserProvider,
+    /**
+     * Inject findOneUserByEmailProvider
+     */
+    private readonly findOneUserByEmailProvider: FindOneUserByEmailProvider,
   ) {}
   /**
    *The method to get all users from the database
    */
   public async createUser(createUserDto: CreateUserDto) {
-    let existingUser: User | null;
-    try {
-      //Check if user already exists with same email
-      existingUser = await this.usersRepository.findOne({
-        where: { email: createUserDto.email },
-      });
-    } catch (error) {
-      //Might save the details of the exception
-      //Information which is sensitive
-      throw new RequestTimeoutException(
-        'Unable to process your request at the moment, please trye later!',
-        {
-          description: 'Error connecting to the database',
-        },
-      );
-    }
-
-    //Handle exception
-    if (existingUser) {
-      throw new BadRequestException(
-        'The user already exists, please check your email!',
-      );
-    }
-    //Create a new user
-    let newUser = this.usersRepository.create(createUserDto);
-    //Handle exception
-    try{
-      newUser = await this.usersRepository.save(newUser);
-    } catch(error){
-      throw new RequestTimeoutException('Unable to process your request at the moment, please trye later!',
-        {description: 'Error connecting to the database!'}
-      )
-    }
-  //  if (!newUser) {
-   //   throw new BadRequestException(
-  //      'The user could not be created, please ty again!',
-  //    );
-   // }
-    newUser = await this.usersRepository.save(newUser);
-    return newUser;
+    return this.createUserProvider.createUser(createUserDto);
   }
 
   public findAll(
@@ -113,20 +83,25 @@ export class UsersService {
         id,
       });
     } catch (error) {
-      throw new RequestTimeoutException('Unable to process your request at the moment, please trye later!',
-        {description: 'Error connecting to the database!'}
-      )
+      throw new RequestTimeoutException(
+        'Unable to process your request at the moment, please trye later!',
+        { description: 'Error connecting to the database!' },
+      );
     }
     /**
      * Handle the user does not exist
      */
-    if(!user){
-      throw new BadRequestException("The user id does not exist")
+    if (!user) {
+      throw new BadRequestException('The user id does not exist');
     }
     return user;
   }
 
-  public async createMany( createManyUsersDto: CreateManyUsersDto){
-   return await this.usersCreateManyProvider.createMany(createManyUsersDto)
+  public async createMany(createManyUsersDto: CreateManyUsersDto) {
+    return await this.usersCreateManyProvider.createMany(createManyUsersDto);
+  }
+
+  public async findOneByEmail(email: string) {
+    return await this.findOneUserByEmailProvider.findOneByEmail(email);
   }
 }
