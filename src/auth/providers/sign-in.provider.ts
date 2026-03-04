@@ -64,7 +64,7 @@ export class SignInProvider {
         expiresIn: this.jwtConfiguration.accessTokenTtl,
       },
     );
-    console.log(accessToken);
+    console.log('SIGN SECRET:', process.env.JWT_SECRET);
     return {
       accessToken,
     };
