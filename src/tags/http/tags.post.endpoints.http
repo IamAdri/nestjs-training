@@ -1,6 +1,6 @@
 POST http://localhost:3000/tags
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjQsImVtYWlsIjoibWFya0BnbWFpbC5jb20iLCJpYXQiOjE3NzI3MTk4MDcsImV4cCI6MTc3MjcyMzQwNywiYXVkIjoibG9jYWxob3N0OjMwMDAiLCJpc3MiOiJsb2NhbGhvc3Q6MzAwMCJ9.cwbKciXhGD6XvWOiXyKwNNwHo7GOgg8xcgsusITxx2c
+Authorization: Bearer ACCESS TOKEN REQUIRED
 
 
 {

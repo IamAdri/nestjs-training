@@ -4,14 +4,14 @@ Content-Type: application/json
 
 {
     "firstName": "Adri",
-    "lastName": "Doe",
-    "email": "adri@gmail.com",
-    "password": "Pass1!!!"
+    "lastName": "Spr",
+    "email": "adri9Spr@gmail.com",
+    "password": "Pass333!"
 }
 
 POST http://localhost:3000/users/create-many
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjQsImVtYWlsIjoibWFya0BnbWFpbC5jb20iLCJpYXQiOjE3NzI2MjkzNzksImV4cCI6MTc3MjYzMjk3OSwiYXVkIjoibG9jYWxob3N0OjMwMDAiLCJpc3MiOiJsb2NhbGhvc3Q6MzAwMCJ9.MaXK4_euvGnHQulzDnSF0Z8_HsBfknldAkB5QpnT6XM
+Authorization: Bearer ACCESS TOKEN
 {
     "users": [
     {
