@@ -36,12 +36,6 @@ export class UsersService {
      */
     @InjectRepository(User)
     private usersRepository: Repository<User>,
-    //Inject Auth Service
-    @Inject(forwardRef(() => AuthService))
-    private readonly authService: AuthService,
-    @Inject(profileConfig.KEY)
-    private readonly profileConfiguration: ConfigType<typeof profileConfig>,
-
     /**
      * Inject usersCreateManyProvider
      */

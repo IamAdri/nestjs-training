@@ -1,6 +1,6 @@
 POST http://localhost:3000/uploads/file
 Content-Type: multipart/form-data; boundary=WebKitFormBoundary
-Authorization: Bearer ACCESSS TOKEN REQUIRED
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEwLCJlbWFpbCI6ImFkcmk5U3ByQGdtYWlsLmNvbSIsImlhdCI6MTc3MzEzODcxMCwiZXhwIjoxNzczMTQyMzEwLCJhdWQiOiJsb2NhbGhvc3Q6MzAwMCIsImlzcyI6ImxvY2FsaG9zdDozMDAwIn0.QW4j7SyvcadDRfeuRAMruY9oKKiifsb-pyF7n3XZFKc
 
 file
 --WebKitFormBoundary

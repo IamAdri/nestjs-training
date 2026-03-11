@@ -3,6 +3,9 @@
   "rootDir": "../",
   "modulePaths": ["<rootDir>"],
   "testEnvironment": "node",
+   "transformIgnorePatterns": [
+    "node_modules/(?!@faker-js/faker)"
+  ],
   "testRegex": ".e2e-spec.ts$",
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
