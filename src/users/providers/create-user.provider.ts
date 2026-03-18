@@ -61,6 +61,7 @@ export class CreateUserProvider {
     try {
       newUser = await this.usersRepository.save(newUser);
     } catch (error) {
+      console.error('REAL DB ERROR:', error);
       throw new RequestTimeoutException(
         'Unable to process your request at the moment, please trye later!',
         { description: 'Error connecting to the database!' },
