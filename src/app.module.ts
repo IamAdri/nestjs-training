@@ -24,9 +24,6 @@ import { MailModule } from './mail/mail.module';
 const ENV = process.env.NODE_ENV;
 @Module({
   imports: [
-    UsersModule,
-    PostsModule,
-    AuthModule,
     ConfigModule.forRoot({
       isGlobal: true,
       //envFilePath: ['.env.development'],
@@ -51,6 +48,9 @@ const ENV = process.env.NODE_ENV;
     }),
     ConfigModule.forFeature(jwtConfig),
     JwtModule.registerAsync(jwtConfig.asProvider()),
+    UsersModule,
+    PostsModule,
+    AuthModule,
     TagsModule,
     MetaOptionsModule,
     PaginationModule,
