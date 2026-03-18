@@ -48,5 +48,7 @@ export function appCreate(app:INestApplication): void {
         region: configService.get('appConfig.awsRegion'),
       });
       //enable cors
-      app.enableCors();
+      app.enableCors({
+        origin: '*'
+      });
 }
